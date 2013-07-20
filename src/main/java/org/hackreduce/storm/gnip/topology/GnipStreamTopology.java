@@ -2,16 +2,16 @@ package org.hackreduce.storm.gnip.topology;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
-import backtype.storm.StormSubmitter;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.TopologyBuilder;
-
 import org.hackreduce.storm.HackReduceStormSubmitter;
 import org.hackreduce.storm.gnip.bolt.GnipEdcRequestBolt;
 import org.hackreduce.storm.gnip.bolt.GnipEventPersistBolt;
 import org.hackreduce.storm.gnip.bolt.GnipEventTransformBolt;
+
+import java.util.Arrays;
 
 public class GnipStreamTopology {
 
@@ -29,6 +29,8 @@ public class GnipStreamTopology {
         "xxx",
         "xxx"
     );
+
+    Arrays.asList(new String[] {"",""});
 
     Config tickConfig = new Config();
     tickConfig.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 1);

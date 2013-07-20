@@ -2,18 +2,9 @@ package org.hackreduce.storm.example.common;
 
 import backtype.storm.Config;
 import backtype.storm.utils.Utils;
-import com.basho.riak.client.IRiakClient;
-import com.basho.riak.client.RiakException;
-import com.basho.riak.client.RiakFactory;
-import com.basho.riak.client.raw.RiakClientFactory;
-import com.basho.riak.client.raw.http.HTTPClientConfig;
-import com.basho.riak.client.raw.http.HTTPClusterConfig;
-import com.basho.riak.client.raw.http.HTTPRiakClientFactory;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import storm.kafka.HostPort;
 import storm.kafka.KafkaConfig;
 
 import java.util.List;
