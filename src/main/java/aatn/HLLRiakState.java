@@ -8,6 +8,7 @@ import com.basho.riak.client.cap.DefaultRetrier;
 import com.basho.riak.client.raw.pbc.PBClientConfig;
 import com.basho.riak.client.raw.pbc.PBClusterConfig;
 import com.twitter.algebird.HLL;
+import com.twitter.algebird.HyperLogLogMonoid;
 import org.hackreduce.storm.example.common.Common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +68,14 @@ public class HLLRiakState implements State {
           .withConverter(new HLLConverter(bucket.getName()))
           .withRetrier(DefaultRetrier.attempts(3))
           .execute();
+      if (current == null) {
+        current = new HyperLogLogMonoid(12).zero();
+      }
       HLL updated = current.$plus(hll);
-      bucket.store(key, updated);
+      bucket.store(key, updated)
+        .withConverter(new HLLConverter(bucket.getName()))
+        .withRetrier(DefaultRetrier.attempts(3))
+        .execute();
       LOG.info("update key: {}, estimated size: {}", key, updated.estimatedSize());
     } catch (RiakRetryFailedException e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

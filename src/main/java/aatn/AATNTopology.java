@@ -1,12 +1,13 @@
 package aatn;
 
 import backtype.storm.Config;
-import backtype.storm.LocalCluster;
+import backtype.storm.generated.AlreadyAliveException;
+import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.tuple.Fields;
-import backtype.storm.utils.Utils;
 import com.twitter.algebird.HLL;
+import org.hackreduce.storm.HackReduceStormSubmitter;
 import org.hackreduce.storm.example.common.Common;
 import storm.kafka.StringScheme;
 import storm.kafka.trident.TransactionalTridentKafkaSpout;
@@ -43,9 +44,8 @@ public class AATNTopology {
     // If you just want to resume where you left off, remove this line
     spoutConfig.forceStartOffsetTime(-2);
 
-    TridentTopology builder = new TridentTopology();
 
-    builder
+    topology
         .newStream(teamPrefix("lines"), new TransactionalTridentKafkaSpout(spoutConfig))
         .parallelismHint(6)
         .each(new Fields("str"), new ExtractUserWords(), new Fields("userId", "word"))
@@ -61,20 +61,20 @@ public class AATNTopology {
     config.setNumWorkers(10);
     config.setNumAckers(10);
 
-    LocalCluster localCluster = new LocalCluster();
-    localCluster.submitTopology("AATN-HLLRIAK", config, aatnTopology.build("aatnfirstbucket"));
+//    LocalCluster localCluster = new LocalCluster();
+//    localCluster.submitTopology("AATN-HLLRIAK", config, aatnTopology.build("aatnfirstbucket"));
+//
+//    Utils.sleep(60000);
+//    localCluster.killTopology("AATN-HLLRIAK");
+//
+//    localCluster.shutdown();
 
-    Utils.sleep(60000);
-    localCluster.killTopology("AATN-HLLRIAK");
-
-    localCluster.shutdown();
-
-//    try {
-//      StormSubmitter.submitTopology("AATN-HLLRIAK", config, aatnTopology.build("aatnfirstbucket"));
-//    } catch (AlreadyAliveException e) {
-//      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//    } catch (InvalidTopologyException e) {
-//      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//    }
+    try {
+      HackReduceStormSubmitter.submitTopology("AATN-HLLRIAK", config, aatnTopology.build("aatnfirstbucket"));
+    } catch (AlreadyAliveException e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    } catch (InvalidTopologyException e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    }
   }
 }
